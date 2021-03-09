@@ -11,6 +11,11 @@ import (
 type MemorySubSystem struct {
 }
 
+func (s *MemorySubSystem) Name() string {
+	return "memory"
+}
+
+//创建资源
 func (s *MemorySubSystem) set(cgroupPath string, res *ResourceConfig) error {
 	if subsysCgrouPath, err := GetCgroupPath(s.Name(), cgroupPath, true); err == nil {
 		if res.MemoryLimit != "" {
@@ -24,14 +29,7 @@ func (s *MemorySubSystem) set(cgroupPath string, res *ResourceConfig) error {
 	}
 }
 
-func (s *MemorySubSystem) Remove(cgroupPath string) error {
-	if subsysCgrouPath, err := GetCgroupPath(s.Name(), cgroupPath, false); err == nil {
-		return os.Remove(subsysCgrouPath)
-	} else {
-		return err
-	}
-}
-
+//注册将进程ID放入
 func (s *MemorySubSystem) Apply(cgroupPath string, pid int) error {
 	if subsysCgrouPath, err := GetCgroupPath(s.Name(), cgroupPath, false); err == nil {
 		if err := ioutil.WriteFile(path.Join(subsysCgrouPath, "tasks"), []byte(strconv.Itoa(pid)), 0644); err != nil {
@@ -43,6 +41,11 @@ func (s *MemorySubSystem) Apply(cgroupPath string, pid int) error {
 	}
 }
 
-func (s *MemorySubSystem) Name() string {
-	return "memory"
+//释放资源
+func (s *MemorySubSystem) Remove(cgroupPath string) error {
+	if subsysCgrouPath, err := GetCgroupPath(s.Name(), cgroupPath, false); err == nil {
+		return os.Remove(subsysCgrouPath)
+	} else {
+		return err
+	}
 }
