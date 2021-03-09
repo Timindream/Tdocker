@@ -11,14 +11,14 @@ func Run(tty bool, comArray []string) {
 
 	parent, writePipe := container.NewParentProcess(tty)
 	if parent == nil {
-		log.Errorf("父进程错误")
+		log.Errorf("进程错误")
 		return
 	}
 	if err := parent.Start(); err != nil {
 		log.Error()
 	}
 
-	sendInitCommand(comArray,writePipe)
+	sendInitCommand(comArray, writePipe)
 	parent.Wait()
 	os.Exit(0)
 }
