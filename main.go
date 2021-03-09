@@ -9,15 +9,14 @@ import (
 func main() {
 	app:=cli.NewApp()
 	app.Name = "tdocker"
-	app.Usage = usage
-	app.Commands = []cli.Commands{
+	app.Commands = []cli.Command{
 		initCommand,
 		runCommand,
 	}
 	app.Before = func(context *cli.Context) error {
 		log.SetFormatter(&log.JSONFormatter{})
 
-		log.SetFormatter(os.Stdout)
+		log.SetOutput(os.Stdout)
 		return nil
 	}
 

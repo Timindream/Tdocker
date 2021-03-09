@@ -4,20 +4,23 @@ import (
 	log "github.com/sirupsen/logrus"
 	"os"
 	"strings"
-	"tdocker/cgroups"
 	"tdocker/container"
 )
 
-func Run(tty bool, command string) {
-	parent := container.NewProcess(tty, command)
+func Run(tty bool, comArray []string) {
+
+	parent, writePipe := container.NewParentProcess(tty)
+	if parent == nil {
+		log.Errorf("父进程错误")
+		return
+	}
 	if err := parent.Start(); err != nil {
 		log.Error()
 	}
-	cgroupManager := cgroups.CgroupManager("tdocker-cgroup")
-	defer cgroupManager.Destroy()
-	cgroupManager.Apply(parent.Process.Pid)
-	sendInitCommand(comArray, writePipe)
+
+	sendInitCommand(comArray,writePipe)
 	parent.Wait()
+	os.Exit(0)
 }
 
 func sendInitCommand(comArray []string, writePipe *os.File) {

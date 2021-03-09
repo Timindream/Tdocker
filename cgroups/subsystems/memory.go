@@ -24,7 +24,7 @@ func (s *MemorySubSystem) set(cgroupPath string, res *ResourceConfig) error {
 	}
 }
 
-func (s *MemorySubSystem) Remove() error {
+func (s *MemorySubSystem) Remove(cgroupPath string) error {
 	if subsysCgrouPath, err := GetCgroupPath(s.Name(), cgroupPath, false); err == nil {
 		return os.Remove(subsysCgrouPath)
 	} else {
@@ -32,7 +32,7 @@ func (s *MemorySubSystem) Remove() error {
 	}
 }
 
-func (s *MemorySubSystem) Apply(cgrouPath string, pid int) error {
+func (s *MemorySubSystem) Apply(cgroupPath string, pid int) error {
 	if subsysCgrouPath, err := GetCgroupPath(s.Name(), cgroupPath, false); err == nil {
 		if err := ioutil.WriteFile(path.Join(subsysCgrouPath, "tasks"), []byte(strconv.Itoa(pid)), 0644); err != nil {
 			return fmt.Errorf("创建失败%v", err)
